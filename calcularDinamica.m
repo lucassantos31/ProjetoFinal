@@ -38,7 +38,8 @@ function Dinamica = calcularDinamica(Pcm)
     for i = 1:n
         q              = Pcm{i}.juntas(1,:);
         dq             = Pcm{i}.juntas(2,:);
-        Iaux           = Pcm{i}.T(1:3,1:3) * I(i) * Pcm{i}.T(1:3,1:3);
+        R              = Pcm{i}.T(1:3,1:3);
+        Iaux           = R * I{i} * R.';
         Dinamica.Ep(i) = (Massa(i)) * Dinamica.gravidade * (Pcm{i}.P);
         Dinamica.Ec(i) = (Massa(i)/2) * transpose(Pcm{i}.V) * Pcm{i}.V + (Massa(i)/2) * transpose(Pcm{i}.W) * Iaux * (Pcm{i}.W);
     end
