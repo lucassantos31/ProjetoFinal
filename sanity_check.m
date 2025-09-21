@@ -94,8 +94,37 @@ Gnum = double(subs(Dcm.Torque.G, subsD, valsD));
 fprintf('\n||M - M^T||_F = %.3e\n', norm(Mnum - Mnum.', 'fro'));
 fprintf('Norma de G: %.3e\n', norm(Gnum));
 
+% Referência independente da matriz de inércia usando func_M (gerada simbolicamente)
+args_func_M = [
+    num2cell(Ival(2:6).'), ...                                      % Ixx2..Ixx6
+    num2cell(zeros(1,5)), ...                                       % Ixy2..Ixy6
+    num2cell(zeros(1,5)), ...                                       % Ixz2..Ixz6
+    num2cell(zeros(1,5)), ...                                       % Iyx2..Iyx6
+    num2cell(Ival(2:6).'), ...                                      % Iyy2..Iyy6
+    num2cell(zeros(1,5)), ...                                       % Iyz2..Iyz6
+    num2cell(zeros(1,5)), ...                                       % Izx2..Izx6
+    num2cell(zeros(1,5)), ...                                       % Izy2..Izy6
+    num2cell(Ival.'), ...                                           % Izz1..Izz6
+    num2cell(Lvals(2:3,1).'), ...                                   % Lx2, Lx3
+    num2cell(LcmVals(:,1).'), ...                                   % Lxcm1..Lxcm6
+    num2cell(LcmVals(:,2).'), ...                                   % Lycm1..Lycm6
+    num2cell(Lvals(4:5,3).'), ...                                   % Lz4, Lz5
+    num2cell(LcmVals(2:6,3).'), ...                                 % Lzcm2..Lzcm6
+    num2cell(Qv), ...                                               % Q1..Q6
+    num2cell(mval) ...                                              % m1..m6
+];
+
+Mref = func_M(args_func_M{:});
+fprintf('||M - M_ref(func\\_M)||_F = %.3e\n', norm(Mnum - Mref, 'fro'));
+
 if norm(Mnum - Mnum.', 'fro') < 1e-8
     disp('✅ M simétrica (ok)');
 else
     warning('⚠️  M não está exatamente simétrica — verifique as expressões.');
+end
+
+if norm(Mnum - Mref, 'fro') < 1e-8
+    disp('✅ M coincide com func_M (ok)');
+else
+    warning('⚠️  Discrepância entre M e func_M — verifique os termos de inércia.');
 end
