@@ -41,9 +41,11 @@ function Dinamica = calcularDinamica(Pcm)
         Iaux           = Pcm{i}.T(1:3,1:3) * I(i) * Pcm{i}.T(1:3,1:3);
         Dinamica.Ep(i) = (Massa(i)) * Dinamica.gravidade * (Pcm{i}.P);
         Dinamica.Ec(i) = (Massa(i)/2) * transpose(Pcm{i}.V) * Pcm{i}.V + (Massa(i)/2) * transpose(Pcm{i}.W) * Iaux * (Pcm{i}.W);
+        Dinamica.EpT   = Dinamica.EpT + Dinamica.Ep(i);
+        Dinamica.EcT   = Dinamica.EcT + Dinamica.Ec(i);
     end
 
-    Dinamica.Lagrangeano = -Dinamica.EcT + Dinamica.EpT;
+    Dinamica.Lagrangeano = Dinamica.EcT - Dinamica.EpT;
 
     for i = 1:n
         Dinamica.G(i,1)  =  diff(Dinamica.Ep(i),q(i));
